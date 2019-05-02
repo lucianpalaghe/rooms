@@ -115,11 +115,30 @@ var RoomEdit = Vue.extend({
     }
 });
 
+var ReservationAdd = Vue.extend({
+  template: '#reservation-add',
+  data() {
+    return {
+      rooms: [],
+    }
+  },
+  mounted() {
+      roomService.findAllRooms(r => {this.rooms = r.data})
+    },
+  methods: {
+    createRoom() {
+//      roomService.createRoom(this.room, r =>{ router.push('/');
+//                                              toastSuccess('Created ' + this.room.name)})
+    }
+  }
+});
+
 const routes= [
       		{path: '/', component: roomList},
       		{path: '/add-room', component: RoomAdd},
       		{path: '/room/:room_id', component: RoomView, name: 'room-view'},
       		{path: '/room/:room_id/edit', component: RoomEdit, name: 'room-edit'},
+      		{path: '/add-reservarion', component: ReservationAdd},
       	];
 
 var router = new VueRouter({
