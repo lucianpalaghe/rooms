@@ -96,8 +96,8 @@
         <div class="form-group">
           <label class="control-label col-sm-2" for="equipment">Echipament</label>
           <div id="equipment" class="col-sm-4">
-            <div v-for="e in equipment" :key="e.serialNumber">
-              <input type="checkbox" v-model="equipment" :value="e"/>
+            <div v-for="e in equipment">
+              <input type="checkbox" v-model="room.equipment" :value="e"/>
               <label>{{e.type}} {{e.serialNumber}}</label>
             </div>
           </div>
@@ -113,7 +113,7 @@
   <template id="room-edit">
     <div>
       <h2>Editeaza sala</h2>
-      <form class="form-horizontal" @submit.prevent="editRoom">
+      <form class="form-horizontal" @submit.prevent="updateRoom">
         <div class="form-group">
           <label class="control-label col-sm-2" for="edit-name">Nume</label>
           <div class="col-sm-4">
@@ -135,9 +135,9 @@
         <div class="form-group">
           <label class="control-label col-sm-2" for="edit-equipment">Echipament</label>
           <div id="edit-equipment" class="col-sm-4">
-            <div v-for="e in room.equipment" :key="e.serialNumber">
+            <div v-for="e in equipment">
               <input type="checkbox" v-model="room.equipment" :value="e"/>
-              <label>{{e.type}}: {{e.serialNumber}}</label>
+              <label>{{e.type}} {{e.serialNumber}}</label>
             </div>
           </div>
         </div>

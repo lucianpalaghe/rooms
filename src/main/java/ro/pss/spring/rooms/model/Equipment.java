@@ -9,6 +9,11 @@ public class Equipment extends BaseEntity {
 	private EquipmentType type;
 	private String serialNumber;
 
+	public Equipment(String type, String serialNumber) {
+		this.type = EquipmentType.fromValue(type);
+		this.serialNumber = serialNumber;
+	}
+
 	public Equipment(EquipmentType type, String serialNumber) {
 		this.type = type;
 		this.serialNumber = serialNumber;

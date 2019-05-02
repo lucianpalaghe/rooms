@@ -20,9 +20,9 @@ var roomService = {
       .catch(error => toast(error))
   },
 
-  updateRoom(id, room, fn) {
+  updateRoom(room, fn) {
     axios
-      .put('/api/rooms/' + id, room)
+      .put('/api/rooms/' + room.id, room)
       .then(response => fn(response))
       .catch(error => toast(error))
   },
@@ -82,7 +82,7 @@ var RoomAdd = Vue.extend({
   data() {
     return {
       room: {name: '', availableSeats: '', floor: '', equipment:[]},
-      equipment:[]
+      equipment: []
     }
   },
   mounted() {
@@ -98,15 +98,16 @@ var RoomAdd = Vue.extend({
 var RoomEdit = Vue.extend({
   template: '#room-edit',
   data: function () {
-    return {room: []};
+    return {room: [], equipment: []};
   },
   methods: {
     updateRoom: function () {
-      roomService.updateRoom(this.room.id, this.room, r => router.push('/'))
+      roomService.updateRoom(this.room, r => router.push('/'))
     }
   },
   mounted() {
-      roomService.findRoomById(this.$route.params.room_id, r => {this.room = r.data})
+      roomService.findRoomById(this.$route.params.room_id, r => {this.room = r.data}),
+      equipmentService.findAllEquipment(r => {this.equipment = r.data})
     }
 });
 
