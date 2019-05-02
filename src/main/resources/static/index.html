@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Rooms</title>
+  <link href="https://unpkg.com/bootstrap@3.4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Room reservations app</h1>
+    <main id="app">
+      <router-view></router-view>
+    </main>
+  </div>
+
+  <template id="room-view">
+    <div>
+      <h2>{{ room.name }}</h2>
+      <b>Locuri disponibile: </b>
+      <div>{{ room.availableSeats }}</div>
+      <b>Etaj: </b>
+      <div>{{ room.floor }}</div>
+      <br/>
+      <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+      <a>
+        <router-link to="/">Inapoi la lista</router-link>
+      </a>
+    </div>
+  </template>
+
+  <template id="room-list">
+    <div>
+      <div class="actions">
+          <router-link :to="{path: '/add-room'}" tag="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-plus"></span>
+            Adauga sala
+          </router-link>
+      </div>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Nume</th>
+          <th>Locuri dispomobile</th>
+          <th>Etaj</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(room, index) in rooms">
+          <td class="col-md-3">
+            <a>
+              <router-link :to="{name: 'room-view', params: {room_id: room.id}}">{{ room.name }}</router-link>
+            </a>
+          </td>
+          <td class="col-md-1">{{ room.availableSeats }}</td>
+          <td class="col-md-1">
+            {{ room.floor }}
+          </td>
+          <td class="col-md-1">
+              <router-link :to="{name: 'room-edit', params: {room_id: room.id}}" tag="button" class="btn btn-warning btn-sm">
+                <span class="glyphicon glyphicon-pencil"></span>
+                Edit</router-link>
+              <button class="btn btn-danger btn-sm" @click="deleteRoom(room.id, index)"><span class="glyphicon glyphicon-trash"></span>Delete</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </template>
+
+  <template id="room-add">
+    <div>
+      <h2>Adauga o sala</h2>
+      <form class="form-horizontal" @submit.prevent="createRoom">
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="name">Nume</label>
+          <div class="col-sm-4">
+            <input class="form-control" id="name" v-model="room.name" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="availableSeats">Locuri disponibile</label>
+          <div class="col-sm-4">
+            <input class="form-control" id="availableSeats" v-model="room.availableSeats"></input> <!--type="number"-->
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="floor">Etaj</label>
+          <div class="col-sm-4">
+            <input class="form-control" id="floor" v-model="room.floor"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="equipment">Echipament</label>
+          <div id="equipment" class="col-sm-4">
+            <div v-for="e in equipment" :key="e.serialNumber">
+              <input type="checkbox" v-model="equipment" :value="e"/>
+              <label>{{e.type}} {{e.serialNumber}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-offset-2">
+          <button type="submit" class="btn btn-primary">Adauga</button>
+          <router-link to="/" tag="button" class="btn btn-default">Cancel</router-link>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <template id="room-edit">
+    <div>
+      <h2>Editeaza sala</h2>
+      <form class="form-horizontal" @submit.prevent="editRoom">
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="edit-name">Nume</label>
+          <div class="col-sm-4">
+            <input class="form-control" id="edit-name" v-model="room.name" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="edit-availableSeats">Locuri disponibile</label>
+          <div class="col-sm-4">
+            <input class="form-control" id="edit-availableSeats" v-model="room.availableSeats"></input> <!--type="number"-->
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="edit-floor">Etaj</label>
+          <div class="col-sm-4">
+            <input class="form-control" id="edit-floor" v-model="room.floor"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="edit-equipment">Echipament</label>
+          <div id="edit-equipment" class="col-sm-4">
+            <div v-for="e in room.equipment" :key="e.serialNumber">
+              <input type="checkbox" v-model="room.equipment" :value="e"/>
+              <label>{{e.type}}: {{e.serialNumber}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-offset-2">
+          <button type="submit" class="btn btn-primary">Salveaza</button>
+          <router-link to="/" tag="button" class="btn btn-default">Cancel</router-link>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <script src="https://unpkg.com/vue@2.5.22/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router@3.0.2/dist/vue-router.js"></script>
+  <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/vue-toasted"></script>
+  <script src="/app.js"></script>
+
+</body>
+</html>
