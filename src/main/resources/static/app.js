@@ -1,55 +1,57 @@
 var roomService = {
-  findAllRooms(fn) {
+  findAllRooms(func) {
     axios
       .get('/api/rooms')
-      .then(response => fn(response))
-      .catch(error => toast(error))
+      .then(response => func(response))
+      .catch(error => toastError(error))
   },
 
-  findRoomById(id, fn) {
+  findRoomById(id, func) {
     axios
       .get('/api/rooms/' + id)
-      .then(response => fn(response))
-      .catch(error => toast(error))
+      .then(response => func(response))
+      .catch(error => toastError(error))
   },
 
-  createRoom(room, fn) {
+  createRoom(room, func) {
     axios
       .post('/api/rooms', room)
-      .then(response => fn(response))
-      .catch(error => toast(error))
+      .then(response => func(response))
+      .catch(error => toastError(error))
   },
 
-  updateRoom(room, fn) {
+  updateRoom(room, func) {
     axios
       .put('/api/rooms/' + room.id, room)
-      .then(response => fn(response))
-      .catch(error => toast(error))
+      .then(response => func(response))
+      .catch(error => toastError(error))
   },
 
-  deleteRoom(id, fn) {
+  deleteRoom(id, func) {
     axios
       .delete('/api/rooms/' + id)
-      .then(response => fn(response))
-      .catch(error => toast(error))
+      .then(response => func(response))
+      .catch(error => toastError(error))
   },
 }
 
 var equipmentService = {
-  findAllEquipment(fn) {
+  findAllEquipment(func) {
       axios
         .get('/api/equipment')
-        .then(response => fn(response))
-        .catch(error => console.log(error))
+        .then(response => func(response))
+        .catch(error => toastError(error))
     },
 }
+var toastProps = { theme: "toasted-primary",
+                 position: "top-right",
+                 duration : 2000 }
+function toastError(text) {
+  return Vue.toasted.error(text, toastProps);
+}
 
-function toast(text) {
-  return Vue.toasted.show(text, {
-                               	 theme: "toasted-primary",
-                               	 position: "top-right",
-                               	 duration : 5000
-                               });
+function toastSuccess(text) {
+  return Vue.toasted.success(text, toastProps);
 }
 
 var roomList = Vue.extend({
@@ -90,7 +92,8 @@ var RoomAdd = Vue.extend({
     },
   methods: {
     createRoom() {
-      roomService.createRoom(this.room, r => router.push('/'))
+      roomService.createRoom(this.room, r =>{ router.push('/');
+                                              toastSuccess('Created ' + this.room.name)})
     }
   }
 });
@@ -102,7 +105,8 @@ var RoomEdit = Vue.extend({
   },
   methods: {
     updateRoom: function () {
-      roomService.updateRoom(this.room, r => router.push('/'))
+      roomService.updateRoom(this.room, r =>{ router.push('/');
+                                              toastSuccess('Updated ' + this.room.name)})
     }
   },
   mounted() {
