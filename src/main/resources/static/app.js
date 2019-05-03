@@ -43,6 +43,24 @@ var equipmentService = {
         .catch(error => toastError(error))
     },
 }
+
+var reservationService = {
+  findAllReservations(func) {
+      axios
+        .get('/api/reservations')
+        .then(response => func(response))
+        .catch(error => toastError(error))
+    },
+
+  getReservationByRoomId(id, func){
+      axios
+        .get('/api/reservations' + id)
+        .then(response => func(response))
+        .catch(error => toastError(error))
+  },
+}
+
+
 var toastProps = { theme: "toasted-primary",
                  position: "top-right",
                  duration : 2000 }
@@ -136,7 +154,7 @@ var ReservationAdd = Vue.extend({
 const routes= [
       		{path: '/', component: roomList},
       		{path: '/add-room', component: RoomAdd},
-      		{path: '/room/:room_id', component: RoomView, name: 'room-view'},
+      		{path: '/room/:room_id', components: { RoomView, ReservationView}, name: 'room-view'},
       		{path: '/room/:room_id/edit', component: RoomEdit, name: 'room-edit'},
       		{path: '/add-reservarion', component: ReservationAdd},
       	];

@@ -9,13 +9,13 @@ import ro.pss.spring.rooms.web.dto.RoomDto;
 import java.util.List;
 
 @Slf4j
-@RestController()
+@RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
     @Autowired
     private RoomService service;
 
-    @GetMapping()
+    @GetMapping
     public List<RoomDto> getAllRooms(){
         log.info("Getting all rooms...");
         return service.getAllRooms();
