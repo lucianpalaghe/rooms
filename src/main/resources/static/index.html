@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -13,21 +13,23 @@
     <h1>Room reservations app</h1>
     <main id="app">
       <router-view></router-view>
+      <router-view name="detail"></router-view>
     </main>
   </div>
 
   <template id="room-view">
     <div>
-      <h2>{{ room.name }}</h2>
-      <b>Locuri disponibile: </b>
-      <div>{{ room.availableSeats }}</div>
-      <b>Etaj: </b>
-      <div>{{ room.floor }}</div>
-      <br/>
       <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
       <a>
         <router-link to="/">Inapoi la lista</router-link>
       </a>
+      <h2>{{ room.name }}</h2>
+      <dl>
+        <dt>Locuri disponibile:</dt>
+        <dd>{{ room.availableSeats }}</dd>
+        <dt>Etaj:</dt>
+        <dd>{{ room.floor }}</dd>
+      </dl>
     </div>
   </template>
 
@@ -143,6 +145,132 @@
               <input type="checkbox" v-model="room.equipment" :value="e"/>
               <label>{{e.type}} {{e.serialNumber}}</label>
             </div>
+          </div>
+        </div>
+        <div class="col-sm-offset-2">
+          <button type="submit" class="btn btn-primary">Salveaza</button>
+          <router-link to="/" tag="button" class="btn btn-default">Cancel</router-link>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <template id="reservation-view">
+    <div>
+      <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+      <a @click="$router.go(-1)">Inapoi</a>
+      <h2>{{ reservation.id }}</h2>
+      <dl>
+        <dt>Data:</dt>
+        <dd>{{ reservation.date }}</dd>
+        <dt>De la:</dt>
+        <dd>{{ reservation.from }}</dd>
+        <dt>Pana la:</dt>
+        <dd>{{ reservation.to}}</dd>
+      </dl>
+  </template>
+
+  <template id="reservation-list-view">
+<!--    <div class="col-md-6">-->
+      <div v-if="reservations.length">
+        <div class="list-group">
+          <router-link v-for="(r, i) in reservations" class="list-group-item" :to="{name: 'reservation-view', params: {reservation_id: r.id}}">
+<!--          <a v-for="(r, i) in reservations" class="list-group-item">-->
+            {{ i+1 }}. Data:
+            <span class="label label-primary">{{r.date}}</span>
+            De la:
+            <span class="label label-primary">{{r.from}}</span>
+            Pana la:
+            <span class="label label-primary">{{r.to}}</span>
+            <button class="btn btn-danger btn-xs pull-right" @click="deleteReservation(r.id, i)"><span class="glyphicon glyphicon-trash"></span></button>
+            <router-link :to="{name: 'reservation-edit', params: {reservation_id: r.id}}" tag="button" class="btn btn-warning btn-xs pull-right">
+              <span class="glyphicon glyphicon-pencil"></span></router-link>
+<!--            <a class="list-group-item">-->
+<!--              <router-link :to="{name: 'reservation-view', params: {reservation_id: r.id}}"></router-link>-->
+<!--            </a>-->
+<!--          </a>-->
+          </router-link>
+        </div>
+      </div>
+      <div v-else>
+        <h3>Nu exista rezervari pentru aceasta sala! </h3>
+      </div>
+<!--    </div>-->
+  </template>
+
+  <template id="reservation-add">
+    <div>
+      <h2>Adauga o rezervare</h2>
+      <form class="form-horizontal" @submit.prevent="createReservation">
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="room">Sala</label>
+          <div class="col-sm-4">
+            <select class="form-control" id="room" v-model="reservation.roomId">
+              <option disabled value="">Nici o sala selectata</option>
+              <option v-for="room in rooms" v-bind:value="room.id">
+                {{ room.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="data">Data</label>
+          <div class="col-sm-4">
+            <input type="date" class="form-control" id="data" v-model="reservation.date"></input>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="from">De cand</label>
+          <div class="col-sm-4">
+            <input type="time" step="1800" class="form-control" id="from" v-model="reservation.from"></input>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="to">Pana cand</label>
+          <div class="col-sm-4">
+            <input type="time" step="1800" class="form-control" id="to" v-model="reservation.to"/>
+          </div>
+        </div>
+        <div class="col-sm-offset-2">
+          <button type="submit" class="btn btn-primary">Adauga</button>
+          <router-link to="/" tag="button" class="btn btn-default">Cancel</router-link>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <template id="reservation-edit">
+    <div>
+      <h2>Editeaza rezervarea: </h2>
+      <form class="form-horizontal" @submit.prevent="updateReservation">
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="edit-room">Sala</label>
+          <div class="col-sm-4">
+            <!--            <input class="form-control" id="room" v-model="reservation.roomId" required/>-->
+            <select class="form-control" id="edit-room" v-model="reservation.roomId">
+              <option disabled value="">Nici o sala selectata</option>
+              <option v-for="room in rooms" v-bind:value="room.id">
+                {{ room.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="edit-data">Data</label>
+          <div class="col-sm-4">
+            <input type="date" class="form-control" id="edit-data" v-model="reservation.date"></input>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="edit-from">De cand</label>
+          <div class="col-sm-4">
+            <input type="time" step="1800" class="form-control" id="edit-from" v-model="reservation.from"></input>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="edit-to">Pana cand</label>
+          <div class="col-sm-4">
+            <input type="time" step="1800" class="form-control" id="edit-to" v-model="reservation.to"/>
           </div>
         </div>
         <div class="col-sm-offset-2">

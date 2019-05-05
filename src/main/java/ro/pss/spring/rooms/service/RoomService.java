@@ -33,7 +33,6 @@ public class RoomService {
 	public void updateRoom(RoomDto room) {
 		Room r = repo.getById(room.id);
 		fill(r, room);
-//		repo.save(r);
 	}
 
 	public void deleteRoom(Long id) {

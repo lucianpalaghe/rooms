@@ -9,7 +9,7 @@ import java.util.List;
 
 public class BaseRepository<T extends BaseEntity> {
 	protected HashMap<Long, T> map = new LinkedHashMap<>();
-	private long nextId = 1;
+	private long nextId = 0;
 
 	public T getById(Long id){
 		if(!map.containsKey(id)){

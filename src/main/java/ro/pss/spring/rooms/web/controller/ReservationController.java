@@ -2,13 +2,9 @@ package ro.pss.spring.rooms.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ro.pss.spring.rooms.model.RoomReservation;
+import org.springframework.web.bind.annotation.*;
 import ro.pss.spring.rooms.service.ReservationService;
+import ro.pss.spring.rooms.web.dto.ReservationDto;
 
 import java.util.List;
 
@@ -20,15 +16,37 @@ public class ReservationController {
 	ReservationService service;
 
 	@GetMapping
-	public List<RoomReservation> getAllReservations(){
+	public List<ReservationDto> search(@RequestParam(value = "roomId") Long roomIdPart){
+		if(roomIdPart != null){
+			log.info("Getting reservations for room: {}", roomIdPart);
+			return service.getReservationByRoomId(roomIdPart);
+		}
+
 		log.info("Getting all reservations");
 		return service.getAllReservations();
 	}
 
 	@GetMapping("{id}")
-	public RoomReservation getReservationById(@PathVariable Long id){
-		log.info("Getting reservation {}", id);
+	public ReservationDto getReservationById(@PathVariable Long id){
+		log.info("Getting reservation: {}", id);
 		return service.getReservation(id);
 	}
 
+	@PostMapping
+	public void addReservation(@RequestBody ReservationDto reservation){
+		log.info("Adding reservation: {}", reservation);
+		service.createReservation(reservation);
+	}
+
+	@PutMapping("{id}")
+	public void editReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto){
+		log.info("Updating reservation: {} with {}", id, reservationDto);
+		service.updateReservation(reservationDto);
+	}
+
+	@DeleteMapping("{id}")
+	public void deleteReservation(@PathVariable Long id){
+		log.info("Deleting reservation: {} ", id);
+		service.deleteReservation(id);
+	}
 }

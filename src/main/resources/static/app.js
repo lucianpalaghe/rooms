@@ -52,12 +52,40 @@ var reservationService = {
         .catch(error => toastError(error))
     },
 
-  getReservationByRoomId(id, func){
+  findReservationById(id, func) {
+    axios
+      .get('/api/reservations/' + id)
+      .then(response => func(response))
+      .catch(error => toastError(error))
+  },
+
+  findReservationsByRoomId(id, func){
       axios
-        .get('/api/reservations' + id)
+        .get('/api/reservations?roomId=' + id)
         .then(response => func(response))
         .catch(error => toastError(error))
   },
+
+  createReservation(reservation, func) {
+    axios
+      .post('/api/reservations', reservation)
+      .then(response => func(response))
+      .catch(error => toastError(error.response.data))
+  },
+
+  updateReservation(reservation, func) {
+      axios
+        .put('/api/reservations/' + reservation.id, reservation)
+        .then(response => func(response))
+        .catch(error => toastError(error.response.data))
+    },
+
+  deleteReservation(id, func) {
+      axios
+        .delete('/api/reservations/' + id)
+        .then(response => func(response))
+        .catch(error => toastError(error))
+    },
 }
 
 
@@ -79,7 +107,7 @@ var roomList = Vue.extend({
   },
   methods:{
     deleteRoom(id, index) {
-        roomService.deleteRoom(id, r => this.rooms.splice(index, 1));
+        roomService.deleteRoom(id, r => { this.rooms.splice(index, 1);toastSuccess('Deleted ' + this.room.name)});
     }
   },
   mounted() {
@@ -110,8 +138,7 @@ var RoomAdd = Vue.extend({
     },
   methods: {
     createRoom() {
-      roomService.createRoom(this.room, r =>{ router.push('/');
-                                              toastSuccess('Created ' + this.room.name)})
+      roomService.createRoom(this.room, r =>{ router.push('/');toastSuccess('Created ' + this.room.name)})
     }
   }
 });
@@ -133,10 +160,41 @@ var RoomEdit = Vue.extend({
     }
 });
 
+var ReservationListView = Vue.extend({
+  template: '#reservation-list-view',
+  data: function () {
+    return {reservations: []};
+  },
+     methods:{
+       deleteReservation(id, index) {
+           reservationService.deleteReservation(id, r =>{ this.reservations.splice(index, 1);toastSuccess('Deleted ' + id)});
+       }
+     },
+  mounted() {
+    reservationService.findReservationsByRoomId(this.$route.params.room_id, r => {this.reservations = r.data})
+  }
+});
+
+var ReservationView = Vue.extend({
+  template: '#reservation-view',
+  data: function () {
+    return {reservation: {}};
+  },
+     methods:{
+       deleteReservation(id, index) {
+           reservationService.deleteReservation(id, r =>{ toastSuccess('Deleted ' + id)});
+       }
+     },
+  mounted() {
+    reservationService.findReservationById(this.$route.params.reservation_id, r => {this.reservation = r.data})
+  }
+});
+
 var ReservationAdd = Vue.extend({
   template: '#reservation-add',
   data() {
     return {
+      reservation: {roomId: '', date: new Date().toISOString().slice(0,10), from: '', to: ''},
       rooms: [],
     }
   },
@@ -144,19 +202,41 @@ var ReservationAdd = Vue.extend({
       roomService.findAllRooms(r => {this.rooms = r.data})
     },
   methods: {
-    createRoom() {
-//      roomService.createRoom(this.room, r =>{ router.push('/');
-//                                              toastSuccess('Created ' + this.room.name)})
+    createReservation() {
+      reservationService.createReservation(this.reservation, r =>{ router.push('/'); toastSuccess('Created reservation!')})
     }
   }
+});
+
+var ReservationEdit = Vue.extend({
+  template: '#reservation-edit',
+  data() {
+    return {
+      reservation: {},
+      rooms: [],
+    }
+  },
+  mounted() {
+      reservationService.findReservationById(this.$route.params.reservation_id, r => {this.reservation = r.data}),
+      roomService.findAllRooms(r => {this.rooms = r.data})
+    },
+  methods: {
+    updateReservation: function () {
+      reservationService.updateReservation(this.reservation, r =>{ router.push('/');toastSuccess('Updated ' + this.reservation.id)})
+    }
+  },
 });
 
 const routes= [
       		{path: '/', component: roomList},
       		{path: '/add-room', component: RoomAdd},
-      		{path: '/room/:room_id', components: { RoomView, ReservationView}, name: 'room-view'},
+      		{path: '/room/:room_id', components:{ default: RoomView,
+      		                                      detail: ReservationListView
+      		}, props: {detail: true}, name: 'room-view'},
       		{path: '/room/:room_id/edit', component: RoomEdit, name: 'room-edit'},
-      		{path: '/add-reservarion', component: ReservationAdd},
+      		{path: '/add-reservation', component: ReservationAdd},
+      		{path: '/reservations/:reservation_id', component: ReservationView, name: 'reservation-view'},
+      		{path: '/reservations/:reservation_id/edit', component: ReservationEdit, name: 'reservation-edit'},
       	];
 
 var router = new VueRouter({

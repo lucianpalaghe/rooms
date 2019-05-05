@@ -1,14 +1,15 @@
 package ro.pss.spring.rooms.repo;
 
-import ro.pss.spring.rooms.model.RoomReservation;
+import org.springframework.stereotype.Repository;
+import ro.pss.spring.rooms.model.Reservation;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
-public class ReservationRepository extends BaseRepository<RoomReservation> {
-	public List<RoomReservation> findByRoomId(Long roomId){
+@Repository
+public class ReservationRepository extends BaseRepository<Reservation> {
+	public List<Reservation> findByRoomId(Long roomId){
 		return map.values().stream().filter(r -> r.getRoomId() == roomId).collect(toList());
 	}
 }

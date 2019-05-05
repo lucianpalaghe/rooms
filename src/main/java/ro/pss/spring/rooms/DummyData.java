@@ -4,11 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.pss.spring.rooms.model.Equipment;
 import ro.pss.spring.rooms.model.EquipmentType;
+import ro.pss.spring.rooms.model.Reservation;
 import ro.pss.spring.rooms.model.Room;
 import ro.pss.spring.rooms.repo.EquipmentRepository;
+import ro.pss.spring.rooms.repo.ReservationRepository;
 import ro.pss.spring.rooms.repo.RoomRepository;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +24,9 @@ public class DummyData {
 
 	@Autowired
 	EquipmentRepository equipmentRepo;
+
+	@Autowired
+	ReservationRepository reservationRepo;
 
 	@PostConstruct
 	public void buildDummyData(){
@@ -40,9 +48,26 @@ public class DummyData {
 		Room r3 = new Room("Sala testare", 20, "4a", equipmentListFull);
 		Room r4 = new Room("Biroul administrativ", 5, "5", equipmentListMini);
 
+		LocalDate d1 = LocalDate.of(2019, 5, 10);
+		LocalTime t1 = LocalTime.of(9, 0);
+		LocalTime t2 = LocalTime.of(12, 0);
+		LocalTime t3 = LocalTime.of(15, 0);
+		LocalTime t4 = LocalTime.of(16, 0);
+
 		roomRepo.save(r1);
 		roomRepo.save(r2);
 		roomRepo.save(r3);
 		roomRepo.save(r4);
+
+		Reservation res1a = new Reservation(1L, d1, t1, t2);
+		Reservation res1b = new Reservation(1L, d1, t2, t3);
+		Reservation res1c = new Reservation(1L, d1, t3, t4);
+		Reservation res2 = new Reservation(2L, d1, t2, t3);
+
+		reservationRepo.save(res1a);
+		reservationRepo.save(res1b);
+		reservationRepo.save(res1c);
+		reservationRepo.save(res2);
+
 	}
 }

@@ -6,6 +6,8 @@ import ro.pss.spring.rooms.model.Room;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 @NoArgsConstructor
 public class RoomDto {
 	public Long id;
@@ -19,8 +21,6 @@ public class RoomDto {
 		this.name = room.getName();
 		this.availableSeats = room.getAvailableSeats();
 		this.floor = room.getFloor();
-		this.equipment = room.getEquipment()
-					.stream()
-					.map(e -> new EquipmentDto(e.getType().value(), e.getSerialNumber())).collect(Collectors.toList());
+		this.equipment = room.getEquipment().stream().map(EquipmentDto::new).collect(toList());
 	}
 }
