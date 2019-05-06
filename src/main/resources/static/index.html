@@ -45,6 +45,7 @@
               Adauga rezervare
           </router-link>
       </div>
+      <!--<div class="col-md-10">-->
       <table class="table table-striped">
         <thead>
         <tr>
@@ -69,11 +70,12 @@
               <router-link :to="{name: 'room-edit', params: {room_id: room.id}}" tag="button" class="btn btn-warning btn-sm">
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit</router-link>
-              <button class="btn btn-danger btn-sm" @click="deleteRoom(room.id, index)"><span class="glyphicon glyphicon-trash"></span>Delete</button>
+              <button class="btn btn-danger btn-sm" @click="deleteRoom(room, index)"><span class="glyphicon glyphicon-trash"></span>Delete</button>
           </td>
         </tr>
         </tbody>
       </table>
+      <!--</div>-->
     </div>
   </template>
 

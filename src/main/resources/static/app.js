@@ -106,8 +106,8 @@ var roomList = Vue.extend({
     return {rooms: []};
   },
   methods:{
-    deleteRoom(id, index) {
-        roomService.deleteRoom(id, r => { this.rooms.splice(index, 1);toastSuccess('Deleted ' + this.room.name)});
+    deleteRoom(room, index) {
+        roomService.deleteRoom(room.id, r => { this.rooms.splice(index, 1); toastSuccess('Deleted ' + room.name)});
     }
   },
   mounted() {
