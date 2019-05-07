@@ -105,7 +105,7 @@ public class RoomService {
 
 		if(equipmentTypePart != null){
 			List<Equipment> equipmentList = equipmentRepo.findByEquipmentType(equipmentTypePart);
-			stream = stream.filter(r -> !r.getEquipment().containsAll(equipmentList)).collect(toList()).stream();
+			stream = stream.filter(r -> r.getEquipment().containsAll(equipmentList)).collect(toList()).stream();
 		}
 
 		return stream.collect(toList());

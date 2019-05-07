@@ -17,7 +17,7 @@ public class ReservationDto {
     public LocalDate date;
     public LocalTime from;
     public LocalTime to;
-    private List<ParticipantDto> participantList = new ArrayList<>();
+    public List<ParticipantDto> participantList = new ArrayList<>();
 
     public ReservationDto(Reservation res) {
         this.id = res.getId();

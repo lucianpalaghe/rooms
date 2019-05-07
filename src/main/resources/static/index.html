@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -21,7 +21,8 @@
     <div>
       <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
       <a>
-        <router-link to="/">Inapoi la lista</router-link>
+        <a @click="$router.go(-1)">Inapoi</a>
+        <!--<router-link to="/">Inapoi la lista</router-link>-->
       </a>
       <h2>{{ room.name }}</h2>
       <dl>
@@ -44,6 +45,78 @@
               <span class="glyphicon glyphicon-time"></span>
               Adauga rezervare
           </router-link>
+        <button v-on:click="isTimeSearchActive=false;isSearchActive = !isSearchActive" class="btn btn-default">
+          <span class="glyphicon glyphicon-search"></span>
+          Cauta sala
+        </button>
+        <button v-on:click="isSearchActive = false; isTimeSearchActive=!isTimeSearchActive" class="btn btn-default">
+          <span class="glyphicon glyphicon-ok-circle"></span>
+          Cauta timeslot
+        </button>
+      </div>
+      <div  v-if="isSearchActive">
+        <h4>Cauta o sala</h4>
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="search-nume">Nume</label>
+            <div class="col-sm-4">
+              <input class="form-control" id="search-nume" v-model="search.name" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="search-availableSeats">Locuri disponibile</label>
+            <div class="col-sm-4">
+              <input type="number" class="form-control" id="search-availableSeats" v-model="search.availableSeats"></input>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="search-floor">Etaj</label>
+            <div class="col-sm-4">
+              <input class="form-control" id="search-floor" v-model="search.floor"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="search-equipment">Echipament</label>
+            <div class="col-sm-4">
+              <input class="form-control" id="search-equipment" v-model="search.equipment"/>
+            </div>
+          </div>
+          <div class="col-sm-offset-2">
+            <button type="submit" @click="findRooms(search)" class="btn btn-primary">Cauta</button>
+          </div>
+        </div>
+      </div>
+      <div  v-if="isTimeSearchActive">
+        <h4>Cauta disponibilitate</h4>
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="search-availability-nume">Numele salii</label>
+            <div class="col-sm-4">
+              <input class="form-control" id="search-availability-nume" v-model="search.name" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="search-availability-date">Data</label>
+            <div class="col-sm-4">
+              <input type="date" class="form-control" id="search-availability-date" v-model="search.date"></input>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="search-availability-from">De la</label>
+            <div class="col-sm-4">
+              <input type="time" step="1800" class="form-control" id="search-availability-from" v-model="search.from"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="search-availability-to">Pana la</label>
+            <div class="col-sm-4">
+              <input type="time" step="1800" class="form-control" id="search-availability-to" v-model="search.to"/>
+            </div>
+          </div>
+          <div class="col-sm-offset-2">
+            <button type="submit" @click="findAvailableRooms(search)" class="btn btn-primary">Cauta sali disponibile</button>
+          </div>
+        </div>
       </div>
       <!--<div class="col-md-10">-->
       <table class="table table-striped">
@@ -173,6 +246,12 @@
         <dd>{{ reservation.from }}</dd>
         <dt>Pana la:</dt>
         <dd>{{ reservation.to}}</dd>
+        <div v-if="reservation.participantList.length">
+          <dt>Participanti:</dt>
+            <dd v-for="(p, i) in reservation.participantList">
+              {{ i+1 }}. {{p.name}} {{p.surname}}
+            </dd>
+        </div>
       </dl>
       </div>
   </template>
@@ -181,7 +260,8 @@
 <!--    <div class="col-md-6">-->
       <div v-if="reservations.length">
         <div class="list-group col-md-6">
-          <li v-for="(r, i) in reservations" class="list-group-item clearfix" :to="{name: 'reservation-view', params: {reservation_id: r.id}}">
+          <li v-for="(r, i) in reservations" class="list-group-item clearfix">
+            <!--:to="{name: 'reservation-view', params: {reservation_id: r.id}}">-->
 <!--          <a v-for="(r, i) in reservations" class="list-group-item">-->
             {{ i+1 }}. Data:
             <span class="label label-primary">{{r.date}}</span>
@@ -190,13 +270,15 @@
             Pana la:
             <span class="label label-primary">{{r.to}}</span>
             <span class="pull-right button-group">
-            <button class="btn btn-danger btn-sm" @click="deleteReservation(r.id, i)"><span class="glyphicon glyphicon-trash"></span></button>
-            <router-link :to="{name: 'reservation-edit', params: {reservation_id: r.id}}" tag="button" class="btn btn-warning btn-sm">
-              <span class="glyphicon glyphicon-pencil"></span></router-link>
-<!--            <a class="list-group-item">-->
-<!--              <router-link :to="{name: 'reservation-view', params: {reservation_id: r.id}}"></router-link>-->
-<!--            </a>-->
-<!--          </a>-->
+              <router-link :to="{name: 'reservation-view', params: {reservation_id: r.id}}" tag="button" class="btn btn-info btn-sm">
+                <span class="glyphicon glyphicon-eye-open"></span></router-link>
+              <router-link :to="{name: 'reservation-edit', params: {reservation_id: r.id}}" tag="button" class="btn btn-warning btn-sm">
+                <span class="glyphicon glyphicon-pencil"></span></router-link>
+  <!--            <a class="list-group-item">-->
+  <!--              <router-link :to="{name: 'reservation-view', params: {reservation_id: r.id}}"></router-link>-->
+  <!--            </a>-->
+  <!--          </a>-->
+              <button class="btn btn-danger btn-sm" @click="deleteReservation(r.id, i)"><span class="glyphicon glyphicon-trash"></span></button>
             </span>
           </li>
         </div>
@@ -238,6 +320,15 @@
           <label class="control-label col-sm-2" for="to">Pana cand</label>
           <div class="col-sm-4">
             <input type="time" step="1800" class="form-control" id="to" v-model="reservation.to"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-2" for="edit-participants">Participanti</label>
+          <div id="edit-participants" class="col-sm-4">
+            <div v-for="p in participants">
+              <input type="checkbox" v-model="reservation.participants" :value="p"/>
+              <label>{{p.name}} {{p.surname}}</label>
+            </div>
           </div>
         </div>
         <div class="col-sm-offset-2">

@@ -13,6 +13,34 @@ var roomService = {
       .catch(error => toastError(error.response.data))
   },
 
+  findRoomsWithFilter(search, func) {
+      axios
+        .get('/api/rooms', {
+                             params: {
+                               name: search.name == '' ? null : search.name,
+                               availableSeats: search.availableSeats == '' ? null : search.availableSeats,
+                               floor: search.floor == '' ? null : search.floor,
+                               equipmentType: search.equipment == '' ? null : search.equipment
+                             }
+                           })
+        .then(response => func(response))
+        .catch(error => toastError(error.response.data))
+    },
+
+    findAvailableRoomsWithFilter(search, func) {
+          axios
+            .get('/api/rooms/availability', {
+                                 params: {
+                                   name: search.name == '' ? null : search.name,
+                                   date: search.availableSeats == '' ? null : search.date,
+                                   from: search.floor == '' ? null : search.from,
+                                   to: search.equipment == '' ? null : search.to
+                                 }
+                               })
+            .then(response => func(response))
+            .catch(error => toastError(error.response.data))
+        },
+
   createRoom(room, func) {
     axios
       .post('/api/rooms', room)
@@ -39,6 +67,15 @@ var equipmentService = {
   findAllEquipment(func) {
       axios
         .get('/api/equipment')
+        .then(response => func(response))
+        .catch(error => toastError(error.response.data))
+    },
+}
+
+var employeeService = {
+  findAllEemployees(func) {
+      axios
+        .get('/api/participants')
         .then(response => func(response))
         .catch(error => toastError(error.response.data))
     },
@@ -103,13 +140,20 @@ function toastSuccess(text) {
 var roomList = Vue.extend({
   template: '#room-list',
   data: function () {
-    return {rooms: []};
+    return {rooms: [], search: {}, isSearchActive: false, isTimeSearchActive: false};
   },
   methods:{
     deleteRoom(room, index) {
         roomService.deleteRoom(room.id, r => { this.rooms.splice(index, 1); toastSuccess('Deleted ' + room.name)});
-    }
-  },
+    },
+    findRooms(search) {
+//        router.push({ path: 'rooms', query: search})
+        roomService.findRoomsWithFilter(search, r => { this.rooms = r.data; });
+        },
+  findAvailableRooms(search) {
+      roomService.findAvailableRoomsWithFilter(search, r => { this.rooms = r.data; });
+      }
+    },
   mounted() {
     roomService.findAllRooms(r => {this.rooms = r.data})
   }
@@ -188,7 +232,7 @@ var ReservationListView = Vue.extend({
 var ReservationView = Vue.extend({
   template: '#reservation-view',
   data: function () {
-    return {reservation: {}};
+    return {reservation: { participantList: []}};
   },
      methods:{
        deleteReservation(id, index) {
@@ -204,12 +248,14 @@ var ReservationAdd = Vue.extend({
   template: '#reservation-add',
   data() {
     return {
-      reservation: {roomId: '', date: new Date().toISOString().slice(0,10), from: '', to: ''},
+      reservation: {roomId: '', date: new Date().toISOString().slice(0,10), from: '', to: '', participants: []},
       rooms: [],
+      participants: [],
     }
   },
   mounted() {
-      roomService.findAllRooms(r => {this.rooms = r.data})
+      roomService.findAllRooms(r => {this.rooms = r.data}),
+      employeeService.findAllEemployees(r => {this.participants = r.data})
     },
   methods: {
     createReservation() {
@@ -239,11 +285,12 @@ var ReservationEdit = Vue.extend({
 
 const routes= [
       		{path: '/', component: roomList},
+      		{path: '/rooms', component: roomList},
       		{path: '/add-room', component: RoomAdd},
-      		{path: '/room/:room_id', components:{ default: RoomView,
+      		{path: '/rooms/:room_id', components:{ default: RoomView,
       		                                      'room-reservations': ReservationListView
       		}, name: 'room-view'},
-      		{path: '/room/:room_id/edit', component: RoomEdit, name: 'room-edit'},
+      		{path: '/rooms/:room_id/edit', component: RoomEdit, name: 'room-edit'},
       		{path: '/add-reservation', component: ReservationAdd},
       		{path: '/reservations/:reservation_id', component: ReservationView, name: 'reservation-view'},
       		{path: '/reservations/:reservation_id/edit', component: ReservationEdit, name: 'reservation-edit'},
