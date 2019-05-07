@@ -3,35 +3,35 @@ var roomService = {
     axios
       .get('/api/rooms')
       .then(response => func(response))
-      .catch(error => toastError(error))
+      .catch(error => toastError(error.response.data))
   },
 
   findRoomById(id, func) {
     axios
       .get('/api/rooms/' + id)
       .then(response => func(response))
-      .catch(error => toastError(error))
+      .catch(error => toastError(error.response.data))
   },
 
   createRoom(room, func) {
     axios
       .post('/api/rooms', room)
       .then(response => func(response))
-      .catch(error => toastError(error))
+      .catch(error => toastError(error.response.data))
   },
 
   updateRoom(room, func) {
     axios
       .put('/api/rooms/' + room.id, room)
       .then(response => func(response))
-      .catch(error => toastError(error))
+      .catch(error => toastError(error.response.data))
   },
 
   deleteRoom(id, func) {
     axios
       .delete('/api/rooms/' + id)
       .then(response => func(response))
-      .catch(error => toastError(error))
+      .catch(error => toastError(error.response.data))
   },
 }
 
@@ -40,7 +40,7 @@ var equipmentService = {
       axios
         .get('/api/equipment')
         .then(response => func(response))
-        .catch(error => toastError(error))
+        .catch(error => toastError(error.response.data))
     },
 }
 
@@ -49,21 +49,21 @@ var reservationService = {
       axios
         .get('/api/reservations')
         .then(response => func(response))
-        .catch(error => toastError(error))
+        .catch(error => toastError(error.response.data))
     },
 
   findReservationById(id, func) {
     axios
       .get('/api/reservations/' + id)
       .then(response => func(response))
-      .catch(error => toastError(error))
+      .catch(error => toastError(error.response.data))
   },
 
   findReservationsByRoomId(id, func){
       axios
         .get('/api/reservations?roomId=' + id)
         .then(response => func(response))
-        .catch(error => toastError(error))
+        .catch(error => toastError(error.response.data))
   },
 
   createReservation(reservation, func) {
@@ -84,7 +84,7 @@ var reservationService = {
       axios
         .delete('/api/reservations/' + id)
         .then(response => func(response))
-        .catch(error => toastError(error))
+        .catch(error => toastError(error.response.data))
     },
 }
 
