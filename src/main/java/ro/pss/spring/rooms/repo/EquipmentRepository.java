@@ -2,10 +2,9 @@ package ro.pss.spring.rooms.repo;
 
 import org.springframework.stereotype.Repository;
 import ro.pss.spring.rooms.model.Equipment;
-import ro.pss.spring.rooms.model.Room;
+import ro.pss.spring.rooms.model.EquipmentType;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -13,6 +12,15 @@ import static java.util.stream.Collectors.toList;
 public class EquipmentRepository extends BaseRepository<Equipment> {
 	public List<Equipment> findBySerialNumber(String sn){
 		return map.values().stream().filter(e -> e.getSerialNumber().contains(sn)).collect(toList());
+	}
+
+	public List<Equipment> findByEquipmentType(String eqType){
+		EquipmentType type = EquipmentType.fromString(eqType);
+		return findByEquipmentType(type);
+	}
+
+	public List<Equipment> findByEquipmentType(EquipmentType eqType){
+		return map.values().stream().filter(e -> e.getType().equals(eqType)).collect(toList());
 	}
 }
 

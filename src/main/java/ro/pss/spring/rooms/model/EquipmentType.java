@@ -16,12 +16,12 @@ public enum EquipmentType {
 		return value;
 	}
 
-	public static EquipmentType fromValue(String v) {
+	public static EquipmentType fromString(String type) {
 		for (EquipmentType c: EquipmentType.values()) {
-			if (c.value.equals(v)) {
+			if (c.value.equals(type)) {
 				return c;
 			}
 		}
-		throw new IllegalArgumentException(v);
+		throw new IllegalArgumentException(type);
 	}
 }

@@ -56,33 +56,29 @@ public class ReservationService {
 
 	private void validateReservation(ReservationDto r){
 		if (r.roomId == null) {
-			throw new IllegalArgumentException("error.roomId.mandatory");
+			throw new IllegalArgumentException("error.reservation.roomIdMandatory");
 		}
 		if (r.date == null) {
-			throw new IllegalArgumentException("error.date.mandatory");
+			throw new IllegalArgumentException("error.reservation.dateMandatory");
 		}
 
 		if (r.from == null) {
-			throw new IllegalArgumentException("error.from.mandatory");
+			throw new IllegalArgumentException("error.reservation.fromMandatory");
 		}
 
 		if (r.to == null) {
-			throw new IllegalArgumentException("error.to.mandatory");
+			throw new IllegalArgumentException("error.reservation.toMandatory");
 		}
 
 		if (r.to.isBefore(r.from)) {
-			throw new IllegalArgumentException("error.to.before.from");
+			throw new IllegalArgumentException("error.reservation.toBeforeFrom");
 		}
 
 		List<Reservation> resList = repo.findByRoomId(r.roomId).stream().filter(room -> r.date.isEqual(room.getDate())).collect(toList());
 		for(Reservation res: resList){
-			if (isOverlapping(r, res.getFrom(), res.getTo())) {
+			if (res.isOverlapping(r.from, r.to)) {
 				throw new IllegalArgumentException("error.interval.overlapping");
 			}
 		}
-	}
-
-	private boolean isOverlapping(ReservationDto r, LocalTime from, LocalTime to){
-		return ((r.from.isBefore(to)) && (r.to.isAfter(from)));
 	}
 }

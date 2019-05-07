@@ -170,13 +170,14 @@
         <dt>Pana la:</dt>
         <dd>{{ reservation.to}}</dd>
       </dl>
+      </div>
   </template>
 
   <template id="reservation-list-view">
 <!--    <div class="col-md-6">-->
       <div v-if="reservations.length">
         <div class="list-group">
-          <router-link v-for="(r, i) in reservations" class="list-group-item" :to="{name: 'reservation-view', params: {reservation_id: r.id}}">
+          <li v-for="(r, i) in reservations" class="list-group-item" :to="{name: 'reservation-view', params: {reservation_id: r.id}}">
 <!--          <a v-for="(r, i) in reservations" class="list-group-item">-->
             {{ i+1 }}. Data:
             <span class="label label-primary">{{r.date}}</span>
@@ -191,7 +192,7 @@
 <!--              <router-link :to="{name: 'reservation-view', params: {reservation_id: r.id}}"></router-link>-->
 <!--            </a>-->
 <!--          </a>-->
-          </router-link>
+          </li>
         </div>
       </div>
       <div v-else>

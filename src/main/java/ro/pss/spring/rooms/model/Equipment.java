@@ -10,7 +10,7 @@ public class Equipment extends BaseEntity {
 	private String serialNumber;
 
 	public Equipment(String type, String serialNumber) {
-		this.type = EquipmentType.fromValue(type);
+		this.type = EquipmentType.fromString(type);
 		this.serialNumber = serialNumber;
 	}
 

@@ -2,6 +2,7 @@ package ro.pss.spring.rooms.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ro.pss.spring.rooms.web.dto.ReservationDto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,5 +21,9 @@ public class Reservation extends BaseEntity {
 		this.date = date;
 		this.from = from;
 		this.to = to;
+	}
+
+	public boolean isOverlapping(LocalTime from, LocalTime to){
+		return (getFrom().isBefore(to)) && (getTo().isAfter(from));
 	}
 }
