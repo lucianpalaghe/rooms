@@ -28,12 +28,12 @@ public class RoomService {
 	@Autowired
 	private ReservationRepository reservationRepo;
 
-	public RoomDto getRoom(Long id) {
-		return new RoomDto(repo.getById(id));
+	public Room getRoom(Long id) {
+		return repo.getById(id);
 	}
 
-	public List<RoomDto> getAllRooms(){
-		return repo.findAll().stream().map(RoomDto::new).collect(toList());
+	public List<Room> getAllRooms(){
+		return repo.findAll();
 	}
 
 	public void createRoom(RoomDto room) {

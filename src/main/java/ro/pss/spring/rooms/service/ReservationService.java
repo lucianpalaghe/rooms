@@ -16,16 +16,16 @@ public class ReservationService {
 	@Autowired
 	ReservationRepository repo;
 
-	public List<ReservationDto> getAllReservations(){
-		return repo.findAll().stream().map(ReservationDto::new).collect(toList());
+	public List<Reservation> getAllReservations(){
+		return repo.findAll();
 	}
 
-	public ReservationDto getReservation(@PathVariable Long id){
-		return new ReservationDto(repo.getById(id));
+	public Reservation getReservation(@PathVariable Long id){
+		return repo.getById(id);
 	}
 
-	public List<ReservationDto> getReservationByRoomId(@PathVariable Long roomId){
-		return repo.findByRoomId(roomId).stream().map(ReservationDto::new).collect(toList());
+	public List<Reservation> getReservationByRoomId(@PathVariable Long roomId){
+		return repo.findByRoomId(roomId);
 	}
 
 	public void createReservation(ReservationDto room) {

@@ -21,10 +21,6 @@ public class EquipmentService {
 		return new EquipmentDto(repo.getById(id));
 	}
 
-	public List<EquipmentDto> getAllEquipment(){
-		return repo.findAll().stream().map(EquipmentDto::new).collect(toList());
-	}
-
 	public List<Equipment> search(String typePart, String serialNumberPart) {
 		Stream<Equipment> stream = repo.findAll().stream();
 

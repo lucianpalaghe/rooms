@@ -8,6 +8,8 @@ import ro.pss.spring.rooms.web.dto.ReservationDto;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/reservations")
@@ -19,17 +21,17 @@ public class ReservationController {
 	public List<ReservationDto> search(@RequestParam(value = "roomId") Long roomIdPart){
 		if(roomIdPart != null){
 			log.info("Getting reservations for room: {}", roomIdPart);
-			return service.getReservationByRoomId(roomIdPart);
+			return service.getReservationByRoomId(roomIdPart).stream().map(ReservationDto::new).collect(toList());
 		}
 
 		log.info("Getting all reservations");
-		return service.getAllReservations();
+		return service.getAllReservations().stream().map(ReservationDto::new).collect(toList());
 	}
 
 	@GetMapping("{id}")
 	public ReservationDto getReservationById(@PathVariable Long id){
 		log.info("Getting reservation: {}", id);
-		return service.getReservation(id);
+		return new ReservationDto(service.getReservation(id));
 	}
 
 	@PostMapping

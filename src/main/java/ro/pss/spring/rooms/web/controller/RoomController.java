@@ -22,7 +22,7 @@ public class RoomController {
 	@GetMapping("{id}")
 	public RoomDto getRoomById(@PathVariable Long id) {
 		log.info("Getting room: {}", id);
-		return service.getRoom(id);
+		return new RoomDto(service.getRoom(id));
 	}
 
 	@PostMapping
