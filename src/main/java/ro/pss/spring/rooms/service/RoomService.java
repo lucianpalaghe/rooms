@@ -1,6 +1,5 @@
 package ro.pss.spring.rooms.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.pss.spring.rooms.model.Equipment;
@@ -14,7 +13,6 @@ import ro.pss.spring.rooms.web.dto.RoomDto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -62,7 +60,7 @@ public class RoomService {
 	}
 
 	private void validateReservation(RoomDto r){
-		if (StringUtils.isNoneEmpty(r.name)) {
+		if (r.name == null || r.name.isEmpty()) {
 			throw new IllegalArgumentException("error.room.nameMandatory");
 		}
 
@@ -70,7 +68,7 @@ public class RoomService {
 			throw new IllegalArgumentException("error.room.tooManyAvailableSeats");
 		}
 
-		if (StringUtils.isNoneEmpty(r.floor)) {
+		if (r.floor == null || r.floor.isEmpty()) {
 			throw new IllegalArgumentException("error.room.floorMandatory");
 		}
 
