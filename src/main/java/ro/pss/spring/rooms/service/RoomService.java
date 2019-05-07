@@ -1,5 +1,6 @@
 package ro.pss.spring.rooms.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.pss.spring.rooms.model.Equipment;
@@ -64,6 +65,10 @@ public class RoomService {
 			throw new IllegalArgumentException("error.room.nameMandatory");
 		}
 
+		if (r.availableSeats == null || r.availableSeats == 0) {
+			throw new IllegalArgumentException("error.room.availableSeatsMandatory");
+		}
+
 		if (r.availableSeats > 1000) {
 			throw new IllegalArgumentException("error.room.tooManyAvailableSeats");
 		}
@@ -73,7 +78,7 @@ public class RoomService {
 		}
 
 		if (r.equipment == null || r.equipment.size() == 0) {
-			throw new IllegalArgumentException("error.room.atLeastOneEqipmentMandatory");
+			throw new IllegalArgumentException("error.room.atLeastOneEquipmentMandatory");
 		}
 
 		// TODO equipment type exists validations
@@ -83,24 +88,24 @@ public class RoomService {
 		Stream<Room> stream = repo.findAll().stream();
 
 		if(idPart != null){
-			stream.filter(r -> r.getId() == idPart);
+			stream = stream.filter(r -> r.getId().equals(idPart)).collect(toList()).stream();
 		}
 
 		if(namePart != null){
-			stream.filter(r -> r.getName().equalsIgnoreCase(namePart));
+			stream = stream.filter(r -> StringUtils.containsIgnoreCase(r.getName(), namePart)).collect(toList()).stream();
 		}
 
 		if(floorPart != null){
-			stream.filter(r -> r.getFloor().equalsIgnoreCase(floorPart));
+			stream = stream.filter(r -> r.getFloor().equalsIgnoreCase(floorPart)).collect(toList()).stream();
 		}
 
 		if(availableSeatsPart != null){
-			stream.filter(r -> r.getAvailableSeats() == availableSeatsPart);
+			stream = stream.filter(r -> r.getAvailableSeats().equals(availableSeatsPart)).collect(toList()).stream();
 		}
 
 		if(equipmentTypePart != null){
 			List<Equipment> equipmentList = equipmentRepo.findByEquipmentType(equipmentTypePart);
-			stream.filter(r -> r.getEquipment().containsAll(equipmentList));
+			stream = stream.filter(r -> !r.getEquipment().containsAll(equipmentList)).collect(toList()).stream();
 		}
 
 		return stream.collect(toList());
@@ -112,7 +117,7 @@ public class RoomService {
 		Stream<Reservation> reservationStream = reservationRepo.findAll().stream();
 
 		if(datePart != null) {
-			reservationStream.filter(r -> r.getDate().equals(datePart));
+			reservationStream = reservationStream.filter(r -> r.getDate().equals(datePart)).collect(toList()).stream();
 		}
 
 		if(fromPart == null){
@@ -125,10 +130,9 @@ public class RoomService {
 
 		LocalTime finalFromPart = fromPart;
 		LocalTime finalToPart = toPart;
-		List<Long> idList = reservationStream.filter(r -> r.isOverlapping(finalFromPart, finalToPart)).map(Reservation::getRoomId).collect(toList());
+		List<Long> idList = reservationStream.filter(r -> r.isDateIntervalOverlapping(finalFromPart, finalToPart)).map(Reservation::getRoomId).collect(toList());
 
-		List<Reservation> reservationList = reservationStream.collect(toList());
-
-		return roomList.stream().filter(r -> (!idList.contains(r.getId()))).collect(toList());
+		final List<Room> collect = roomList.stream().filter(r -> (!idList.contains(r.getId()))).collect(toList());
+		return collect;
 	}
 }

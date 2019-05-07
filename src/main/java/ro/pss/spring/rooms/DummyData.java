@@ -2,11 +2,9 @@ package ro.pss.spring.rooms;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ro.pss.spring.rooms.model.Equipment;
-import ro.pss.spring.rooms.model.EquipmentType;
-import ro.pss.spring.rooms.model.Reservation;
-import ro.pss.spring.rooms.model.Room;
+import ro.pss.spring.rooms.model.*;
 import ro.pss.spring.rooms.repo.EquipmentRepository;
+import ro.pss.spring.rooms.repo.ParticipantRepository;
 import ro.pss.spring.rooms.repo.ReservationRepository;
 import ro.pss.spring.rooms.repo.RoomRepository;
 
@@ -14,6 +12,7 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,6 +26,9 @@ public class DummyData {
 
 	@Autowired
 	ReservationRepository reservationRepo;
+
+	@Autowired
+	ParticipantRepository participantnRepo;
 
 	@PostConstruct
 	public void buildDummyData(){
@@ -59,10 +61,24 @@ public class DummyData {
 		roomRepo.save(r3);
 		roomRepo.save(r4);
 
-		Reservation res1a = new Reservation(1L, d1, t1, t2);
-		Reservation res1b = new Reservation(1L, d1, t2, t3);
-		Reservation res1c = new Reservation(1L, d1, t3, t4);
-		Reservation res2 = new Reservation(2L, d1, t2, t3);
+		Participant p1 = new Participant("Ionel", "Ionescu", "abc123");
+		Participant p2 = new Participant("Gigel", "Popescu", "qwe456");
+		Participant p3 = new Participant("Mihai", "Georgescu", "zxc789");
+		Participant p4 = new Participant("Fanel", "Fane", "999");
+		Participant p5 = new Participant("Andrei", "Bogdan", "98764");
+		participantnRepo.save(p1);
+		participantnRepo.save(p2);
+		participantnRepo.save(p3);
+		participantnRepo.save(p4);
+		participantnRepo.save(p5);
+
+		List<Participant> participantListFull = Arrays.asList(p1, p2, p3, p4, p5);
+		List<Participant> participantListMini = Arrays.asList(p2, p3, p4);
+
+		Reservation res1a = new Reservation(1L, d1, t1, t2, participantListFull);
+		Reservation res1b = new Reservation(1L, d1, t2, t3, participantListMini);
+		Reservation res1c = new Reservation(1L, d1, t3, t4, participantListFull);
+		Reservation res2 = new Reservation(2L, d1, t2, t3, participantListMini);
 
 		reservationRepo.save(res1a);
 		reservationRepo.save(res1b);

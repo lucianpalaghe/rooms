@@ -26,11 +26,11 @@ public class EquipmentService {
 
 		if(typePart != null){
 			EquipmentType type = EquipmentType.fromString(typePart);
-			stream.filter(r -> r.getType().equals(type));
+			stream = stream.filter(r -> r.getType().equals(type)).collect(toList()).stream();
 		}
 
 		if(serialNumberPart != null){
-			stream.filter(r -> r.getSerialNumber().equalsIgnoreCase(serialNumberPart));
+			stream = stream.filter(r -> r.getSerialNumber().equalsIgnoreCase(serialNumberPart)).collect(toList()).stream();
 		}
 
 		return stream.collect(toList());

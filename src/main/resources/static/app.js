@@ -133,13 +133,23 @@ var RoomAdd = Vue.extend({
       equipment: []
     }
   },
-  mounted() {
+  beforeMount() {
       equipmentService.findAllEquipment(r => {this.equipment = r.data})
     },
+//    computed: {
+//    getEquipmentMap(){
+//            i=0;
+//            if(this.equipment.length == 0){
+//            return null;}
+//            this.equipment.reduce(function(map, obj) {
+//            map[i++] = obj.val.type;
+//            return map;
+//        }, {})}
+//    },
   methods: {
     createRoom() {
       roomService.createRoom(this.room, r =>{ router.push('/');toastSuccess('Created ' + this.room.name)})
-    }
+    },
   }
 });
 
@@ -231,8 +241,8 @@ const routes= [
       		{path: '/', component: roomList},
       		{path: '/add-room', component: RoomAdd},
       		{path: '/room/:room_id', components:{ default: RoomView,
-      		                                      detail: ReservationListView
-      		}, props: {detail: true}, name: 'room-view'},
+      		                                      'room-reservations': ReservationListView
+      		}, name: 'room-view'},
       		{path: '/room/:room_id/edit', component: RoomEdit, name: 'room-edit'},
       		{path: '/add-reservation', component: ReservationAdd},
       		{path: '/reservations/:reservation_id', component: ReservationView, name: 'reservation-view'},
@@ -244,8 +254,10 @@ var router = new VueRouter({
 	routes
 });
 
+Vue.component('voerro-tags-input', VoerroTagsInput);
 new Vue({
-  router
+components: { VoerroTagsInput },
+  router,
 }).$mount('#app');
 Vue.use(Toasted);
 

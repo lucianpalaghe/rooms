@@ -3,6 +3,7 @@ package ro.pss.spring.rooms.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ro.pss.spring.rooms.model.Participant;
 import ro.pss.spring.rooms.service.ParticipantService;
 import ro.pss.spring.rooms.web.dto.ParticipantDto;
 
@@ -45,6 +46,8 @@ public class ParticipantController {
 	public List<ParticipantDto> search(@RequestParam(required = false, name = "name") String namePart,
 									   @RequestParam(required = false, name = "surname") String surnamePart,
 									   @RequestParam(required = false, name = "employeeId") String employeePart){
+		List<Participant> list = service.search(namePart, surnamePart, employeePart);
+		System.out.println(list);
 		return service.search(namePart, surnamePart, employeePart)
 				.stream()
 				.map(ParticipantDto::new)

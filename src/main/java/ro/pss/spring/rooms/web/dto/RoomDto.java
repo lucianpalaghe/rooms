@@ -4,7 +4,6 @@ import lombok.NoArgsConstructor;
 import ro.pss.spring.rooms.model.Room;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

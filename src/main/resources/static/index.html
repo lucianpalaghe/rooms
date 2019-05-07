@@ -13,7 +13,7 @@
     <h1>Room reservations app</h1>
     <main id="app">
       <router-view></router-view>
-      <router-view name="detail"></router-view>
+      <router-view name="room-reservations"></router-view>
     </main>
   </div>
 
@@ -82,6 +82,10 @@
   <template id="room-add">
     <div>
       <h2>Adauga o sala</h2>
+
+      <!--<voerro-tags-input element-id="tags"-->
+                         <!--:existing-tags="getEquipmentMap"-->
+                  <!--:typeahead="true"></voerro-tags-input>-->
       <form class="form-horizontal" @submit.prevent="createRoom">
         <div class="form-group">
           <label class="control-label col-sm-2" for="name">Nume</label>
@@ -92,7 +96,7 @@
         <div class="form-group">
           <label class="control-label col-sm-2" for="availableSeats">Locuri disponibile</label>
           <div class="col-sm-4">
-            <input class="form-control" id="availableSeats" v-model="room.availableSeats"></input> <!--type="number"-->
+            <input type="number" class="form-control" id="availableSeats" v-model="room.availableSeats"></input>
           </div>
         </div>
         <div class="form-group">
@@ -176,8 +180,8 @@
   <template id="reservation-list-view">
 <!--    <div class="col-md-6">-->
       <div v-if="reservations.length">
-        <div class="list-group">
-          <li v-for="(r, i) in reservations" class="list-group-item" :to="{name: 'reservation-view', params: {reservation_id: r.id}}">
+        <div class="list-group col-md-6">
+          <li v-for="(r, i) in reservations" class="list-group-item clearfix" :to="{name: 'reservation-view', params: {reservation_id: r.id}}">
 <!--          <a v-for="(r, i) in reservations" class="list-group-item">-->
             {{ i+1 }}. Data:
             <span class="label label-primary">{{r.date}}</span>
@@ -185,13 +189,15 @@
             <span class="label label-primary">{{r.from}}</span>
             Pana la:
             <span class="label label-primary">{{r.to}}</span>
-            <button class="btn btn-danger btn-xs pull-right" @click="deleteReservation(r.id, i)"><span class="glyphicon glyphicon-trash"></span></button>
-            <router-link :to="{name: 'reservation-edit', params: {reservation_id: r.id}}" tag="button" class="btn btn-warning btn-xs pull-right">
+            <span class="pull-right button-group">
+            <button class="btn btn-danger btn-sm" @click="deleteReservation(r.id, i)"><span class="glyphicon glyphicon-trash"></span></button>
+            <router-link :to="{name: 'reservation-edit', params: {reservation_id: r.id}}" tag="button" class="btn btn-warning btn-sm">
               <span class="glyphicon glyphicon-pencil"></span></router-link>
 <!--            <a class="list-group-item">-->
 <!--              <router-link :to="{name: 'reservation-view', params: {reservation_id: r.id}}"></router-link>-->
 <!--            </a>-->
 <!--          </a>-->
+            </span>
           </li>
         </div>
       </div>
@@ -288,6 +294,9 @@
   <script src="https://unpkg.com/vue-router@3.0.2/dist/vue-router.js"></script>
   <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script>
   <script src="https://unpkg.com/vue-toasted"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@voerro/vue-tagsinput@1.8.0/dist/voerro-vue-tagsinput.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@voerro/vue-tagsinput@1.11.2/dist/style.css">
+
   <script src="/app.js"></script>
 
 </body>

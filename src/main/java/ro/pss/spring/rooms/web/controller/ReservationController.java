@@ -18,7 +18,7 @@ public class ReservationController {
 	ReservationService service;
 
 	@GetMapping
-	public List<ReservationDto> search(@RequestParam(value = "roomId") Long roomIdPart){
+	public List<ReservationDto> search(@RequestParam(required = false, value = "roomId") Long roomIdPart){
 		if(roomIdPart != null){
 			log.info("Getting reservations for room: {}", roomIdPart);
 			return service.getReservationByRoomId(roomIdPart).stream().map(ReservationDto::new).collect(toList());

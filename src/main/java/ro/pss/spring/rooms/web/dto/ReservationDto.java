@@ -5,6 +5,10 @@ import ro.pss.spring.rooms.model.Reservation;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
 public class ReservationDto {
@@ -13,6 +17,7 @@ public class ReservationDto {
     public LocalDate date;
     public LocalTime from;
     public LocalTime to;
+    private List<ParticipantDto> participantList = new ArrayList<>();
 
     public ReservationDto(Reservation res) {
         this.id = res.getId();
@@ -20,5 +25,6 @@ public class ReservationDto {
         this.date = res.getDate();
         this.from = res.getFrom();
         this.to = res.getTo();
+        this.participantList = res.getParticipantList().stream().map(ParticipantDto::new).collect(toList());
     }
 }

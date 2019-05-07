@@ -2,6 +2,7 @@ package ro.pss.spring.rooms.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ro.pss.spring.rooms.service.RoomService;
 import ro.pss.spring.rooms.web.dto.RoomDto;
@@ -58,9 +59,9 @@ public class RoomController {
 	@GetMapping("/availability")
 	public List<RoomDto> searchAvailability(@RequestParam(required = false, name = "id") Long idPart,
 											@RequestParam(required = false, name = "name") String namePart,
-											@RequestParam(required = false, name = "date") LocalDate datePart,
-											@RequestParam(required = false, name = "from") LocalTime fromPart,
-											@RequestParam(required = false, name = "to") LocalTime toPart){
+											@RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datePart,
+											@RequestParam(required = false, name = "from") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime fromPart,
+											@RequestParam(required = false, name = "to") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime toPart){
 		return service.searchAvailability(idPart, namePart, datePart, fromPart, toPart)
 				.stream()
 				.map(RoomDto::new)

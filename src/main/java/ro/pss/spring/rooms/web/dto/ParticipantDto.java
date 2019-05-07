@@ -6,9 +6,9 @@ import ro.pss.spring.rooms.model.Participant;
 @NoArgsConstructor
 public class ParticipantDto {
 	public Long id;
-	private String name;
-	private String surname;
-	private String employeeId;
+	public String name;
+	public String surname;
+	public String employeeId;
 
 	public ParticipantDto(Participant participant){
 		this.id = participant.getId();

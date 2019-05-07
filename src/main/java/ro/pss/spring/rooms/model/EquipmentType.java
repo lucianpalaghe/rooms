@@ -18,7 +18,7 @@ public enum EquipmentType {
 
 	public static EquipmentType fromString(String type) {
 		for (EquipmentType c: EquipmentType.values()) {
-			if (c.value.equals(type)) {
+			if (c.value.equalsIgnoreCase(type)) {
 				return c;
 			}
 		}

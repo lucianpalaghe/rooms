@@ -73,7 +73,7 @@ public class ReservationService {
 
 		List<Reservation> resList = repo.findByRoomId(r.roomId).stream().filter(room -> r.date.isEqual(room.getDate())).collect(toList());
 		for(Reservation res: resList){
-			if (res.isOverlapping(r.from, r.to)) {
+			if (res.isDateIntervalOverlapping(r.from, r.to)) {
 				throw new IllegalArgumentException("error.interval.overlapping");
 			}
 		}

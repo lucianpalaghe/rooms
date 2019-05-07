@@ -1,5 +1,6 @@
 package ro.pss.spring.rooms.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.pss.spring.rooms.model.Participant;
@@ -19,21 +20,12 @@ public class ParticipantService {
 		return repo.getById(id);
 	}
 
-	public List<Participant> search(String namePart, String surnamePart, String employeeId){
+	public List<Participant> search(String namePart, String surnamePart, String employeeIdPart){
 		Stream<Participant> stream = repo.findAll().stream();
 
-		if(namePart != null){
-			stream.filter(r -> r.getName().contains(namePart));
-		}
-
-		if(surnamePart != null){
-			stream.filter(r -> r.getSurname().contains(surnamePart));
-		}
-
-		if(employeeId != null){
-			stream.filter(r -> r.getEmployeeId().contains(employeeId));
-		}
-
-		return stream.collect(toList());
+		return stream.filter(namePart == null ? r -> true : r -> StringUtils.containsIgnoreCase(r.getName(), namePart))
+					 .filter(surnamePart == null ? r -> true : r -> StringUtils.containsIgnoreCase(r.getSurname(), surnamePart))
+					 .filter(employeeIdPart == null ? r -> true : r -> StringUtils.containsIgnoreCase(r.getEmployeeId(), employeeIdPart))
+					 .collect(toList());
 	}
 }
