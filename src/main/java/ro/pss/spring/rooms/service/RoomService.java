@@ -88,24 +88,24 @@ public class RoomService {
 		Stream<Room> stream = repo.findAll().stream();
 
 		if(idPart != null){
-			stream = stream.filter(r -> r.getId().equals(idPart)).collect(toList()).stream();
+			stream = stream.filter(r -> r.getId().equals(idPart));
 		}
 
 		if(namePart != null){
-			stream = stream.filter(r -> StringUtils.containsIgnoreCase(r.getName(), namePart)).collect(toList()).stream();
+			stream = stream.filter(r -> StringUtils.containsIgnoreCase(r.getName(), namePart));
 		}
 
 		if(floorPart != null){
-			stream = stream.filter(r -> r.getFloor().equalsIgnoreCase(floorPart)).collect(toList()).stream();
+			stream = stream.filter(r -> r.getFloor().equalsIgnoreCase(floorPart));
 		}
 
 		if(availableSeatsPart != null){
-			stream = stream.filter(r -> r.getAvailableSeats().equals(availableSeatsPart)).collect(toList()).stream();
+			stream = stream.filter(r -> r.getAvailableSeats().equals(availableSeatsPart));
 		}
 
 		if(equipmentTypePart != null){
 			List<Equipment> equipmentList = equipmentRepo.findByEquipmentType(equipmentTypePart);
-			stream = stream.filter(r -> r.getEquipment().containsAll(equipmentList)).collect(toList()).stream();
+			stream = stream.filter(r -> r.getEquipment().containsAll(equipmentList));
 		}
 
 		return stream.collect(toList());
