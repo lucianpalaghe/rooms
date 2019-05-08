@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 @Service
+//@Transactional
 public class ParticipantService {
 	@Autowired
 	private ParticipantRepository repo;

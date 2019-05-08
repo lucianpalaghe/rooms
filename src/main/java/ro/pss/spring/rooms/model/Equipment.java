@@ -9,6 +9,7 @@ public class Equipment extends BaseEntity {
 	private EquipmentType type;
 	private String serialNumber;
 
+//	private Equipment() {} //pt hibernate
 	public Equipment(String type, String serialNumber) {
 		this.type = EquipmentType.fromString(type);
 		this.serialNumber = serialNumber;

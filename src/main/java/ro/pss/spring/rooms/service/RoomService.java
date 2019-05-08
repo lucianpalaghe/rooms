@@ -3,6 +3,8 @@ package ro.pss.spring.rooms.service;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ro.pss.spring.rooms.facade.RoomAvailabilityCriteria;
+import ro.pss.spring.rooms.facade.RoomCriteria;
 import ro.pss.spring.rooms.model.Equipment;
 import ro.pss.spring.rooms.model.Reservation;
 import ro.pss.spring.rooms.model.Room;
@@ -33,7 +35,7 @@ public class RoomService {
 		return repo.getById(id);
 	}
 
-	public List<Room> getAllRooms(){
+	public List<Room> getAllRooms() {
 		return repo.findAll();
 	}
 
@@ -60,7 +62,7 @@ public class RoomService {
 		r.setEquipment(dto.equipment.stream().map(e -> new Equipment(e.type, e.serialNumber)).collect(toList()));
 	}
 
-	private void validateReservation(RoomDto r){
+	private void validateReservation(RoomDto r) {
 		if (r.name == null || r.name.isEmpty()) {
 			throw new IllegalArgumentException("error.room.nameMandatory");
 		}
@@ -82,6 +84,10 @@ public class RoomService {
 		}
 
 		// TODO equipment type exists validations
+	}
+
+	public List<Room> search(RoomCriteria criteria) {
+		return search(criteria.idPart, criteria.namePart, criteria.floorPart, criteria.availableSeatsPart, criteria.equipmentTypePart);
 	}
 
 	public List<Room> search(Long idPart, String namePart, String floorPart, Integer availableSeatsPart, String equipmentTypePart){
@@ -111,20 +117,24 @@ public class RoomService {
 		return stream.collect(toList());
 	}
 
+	public List<Room> searchAvailability(RoomAvailabilityCriteria criteria) {
+		return searchAvailability(criteria.idPart, criteria.namePart, criteria.datePart, criteria.fromPart, criteria.toPart);
+	}
+
 	public List<Room> searchAvailability(Long idPart, String namePart, LocalDate datePart, LocalTime fromPart, LocalTime toPart) {
 		List<Room> roomList = search(idPart, namePart, null, null, null);
 
 		Stream<Reservation> reservationStream = reservationRepo.findAll().stream();
 
-		if(datePart != null) {
+		if (datePart != null) {
 			reservationStream = reservationStream.filter(r -> r.getDate().equals(datePart)).collect(toList()).stream();
 		}
 
-		if(fromPart == null){
+		if (fromPart == null) {
 			fromPart = LocalTime.of(0, 0);
 		}
 
-		if(toPart == null){
+		if (toPart == null) {
 			toPart = LocalTime.of(12, 59);
 		}
 
@@ -132,7 +142,6 @@ public class RoomService {
 		LocalTime finalToPart = toPart;
 		List<Long> idList = reservationStream.filter(r -> r.isDateIntervalOverlapping(finalFromPart, finalToPart)).map(Reservation::getRoomId).collect(toList());
 
-		final List<Room> collect = roomList.stream().filter(r -> (!idList.contains(r.getId()))).collect(toList());
-		return collect;
+		return roomList.stream().filter(r -> (!idList.contains(r.getId()))).collect(toList());
 	}
 }

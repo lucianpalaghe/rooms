@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ro.pss.spring.rooms.facade.RoomAvailabilityCriteria;
+import ro.pss.spring.rooms.facade.RoomCriteria;
+import ro.pss.spring.rooms.facade.RoomFacade;
 import ro.pss.spring.rooms.service.RoomService;
 import ro.pss.spring.rooms.web.dto.RoomDto;
 
@@ -19,6 +22,9 @@ import static java.util.stream.Collectors.toList;
 public class RoomController {
 	@Autowired
 	private RoomService service;
+
+	@Autowired
+	private RoomFacade facade;
 
 	@GetMapping("{id}")
 	public RoomDto getRoomById(@PathVariable Long id) {
@@ -44,6 +50,14 @@ public class RoomController {
 		service.deleteRoom(id);
 	}
 
+	@PostMapping("/search")
+	public List<RoomDto> search(@RequestBody RoomCriteria criteria){
+		return facade.search(criteria)
+				.stream()
+				.map(RoomDto::new)
+				.collect(toList());
+	}
+
 	@GetMapping
 	public List<RoomDto> search(@RequestParam(required = false, name = "id") Long idPart,
 								@RequestParam(required = false, name = "name") String namePart,
@@ -56,12 +70,20 @@ public class RoomController {
 				.collect(toList());
 	}
 
+	@PostMapping("/availability/search")
+	public List<RoomDto> searchAvailability(@RequestBody  RoomAvailabilityCriteria criteria){
+		return facade.searchAvailability(criteria)
+				.stream()
+				.map(RoomDto::new)
+				.collect(toList());
+	}
+
 	@GetMapping("/availability")
 	public List<RoomDto> searchAvailability(@RequestParam(required = false, name = "id") Long idPart,
 											@RequestParam(required = false, name = "name") String namePart,
 											@RequestParam(required = false, name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datePart,
-											@RequestParam(required = false, name = "from") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime fromPart,
-											@RequestParam(required = false, name = "to") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime toPart){
+											@RequestParam(required = false, name = "from") @DateTimeFormat LocalTime fromPart,
+											@RequestParam(required = false, name = "to") @DateTimeFormat LocalTime toPart){
 		return service.searchAvailability(idPart, namePart, datePart, fromPart, toPart)
 				.stream()
 				.map(RoomDto::new)

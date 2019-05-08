@@ -1,5 +1,6 @@
 package ro.pss.spring.rooms.model;
 
+//@MappedSupperclass
 public abstract class BaseEntity {
 	protected Long id;
 

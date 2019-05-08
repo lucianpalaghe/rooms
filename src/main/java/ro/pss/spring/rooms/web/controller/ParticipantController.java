@@ -27,19 +27,19 @@ public class ParticipantController {
 //	@PostMapping
 //	public void addParticipant(@RequestBody ParticipantDto participant) {
 //		log.info("Adding participant: {}", participant);
-//		service.createParticipant(participant);
+//		facade.createParticipant(participant);
 //	}
 //
 //	@PutMapping("{id}")
 //	public void editParticipant(@PathVariable Long id, @RequestBody ParticipantDto participant) {
 //		log.info("Updating participant: {} with {}", id, participant);
-//		service.updateParticipant(participant);
+//		facade.updateParticipant(participant);
 //	}
 //
 //	@DeleteMapping("{id}")
 //	public void deleteParticipant(@PathVariable Long id) {
 //		log.info("Deleting participant: {} ", id);
-//		service.deleteParticipant(id);
+//		facade.deleteParticipant(id);
 //	}
 
 	@GetMapping
